@@ -12,29 +12,27 @@ import { formatPrice } from "~/lib/utils";
 export const ProductCard: React.FC<{ product: Products }> = ({
   product: item,
 }) => {
-  const [isAdding, setIsAdding] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const [justAdded, setJustAdded] = React.useState(false);
-  const [inCart, setInCart] = React.useState(false);
   const { addItem, removeItem, items } = useCartStore((state) => state);
+
+  const inCart = React.useMemo(
+    () => items.some((cartItem) => cartItem.id === item.id),
+    [items, item.id]
+  );
 
   const handleAddToCart = () => {
     if (inCart) {
       removeItem(item.id);
-      setInCart(false);
+      setJustAdded(false);
       return;
     }
-
-    setIsAdding(true);
+    setIsProcessing(true);
     addItem(item);
-    setIsAdding(false);
+    setIsProcessing(false);
     setJustAdded(true);
-    setInCart(true);
+    setTimeout(() => setJustAdded(false), 2000);
   };
-
-  React.useEffect(() => {
-    const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-    setInCart(!!itemInCart);
-  }, [items, item.id]);
 
   return (
     <Card className="group hover:shadow-lg transition-shadow duration-200">
@@ -66,25 +64,25 @@ export const ProductCard: React.FC<{ product: Products }> = ({
       <CardFooter className="p-4 pt-0">
         <Button
           onClick={handleAddToCart}
-          disabled={isAdding || justAdded || inCart}
-          className="w-full"
+          disabled={isProcessing}
           variant={justAdded ? "secondary" : "default"}
+          className="w-full"
         >
-          {isAdding ? (
+          {isProcessing ? (
             <>
-              <Plus className="h-4 w-4 mr-2 animate-spin" />
-              Adding...
+              <Plus className="h-5 w-5 animate-spin" />
+              Processing...
             </>
           ) : justAdded ? (
             <>
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Added to Cart
+              <ShoppingCart className="h-5 w-5" />
+              Added!
             </>
           ) : inCart ? (
-            "In Cart"
+            "Remove"
           ) : (
             <>
-              <ShoppingCart className="h-4 w-4 mr-2" />
+              <ShoppingCart className="h-5 w-5" />
               Add to Cart
             </>
           )}

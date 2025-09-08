@@ -12,7 +12,7 @@ export default async function Home({
   const { order, search, sortBy } = await loadSearchParams(searchParams);
   const items = await api.products.getAllProducts({ order, search, sortBy });
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-7xl mx-auto">
       <ProductFilter />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {items.map((item) => (
