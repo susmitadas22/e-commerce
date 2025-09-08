@@ -7,6 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
+    "postinstall": "prisma generate",
     "format": "biome format --write"
   },
   "dependencies": {
